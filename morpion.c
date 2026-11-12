@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-// ✅ 1. La fonction affiche vraiment la grille
+
 void afficher_grille(char grille[3][3]) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -15,23 +15,41 @@ void afficher_grille(char grille[3][3]) {
 
 int a_gagne(char grille[3][3], char joueur) {
     for (int i = 0; i < 3; i++) {
-        // ligne i
+
         if (grille[i][0] == joueur && grille[i][1] == joueur && grille[i][2] == joueur) {
             return 1;
         }
-        // colonne i
+
         if (grille[0][i] == joueur && grille[1][i] == joueur && grille[2][i] == joueur) {
             return 1;
         }
     }
-    // diagonales
+
     if (grille[0][0] == joueur && grille[1][1] == joueur && grille[2][2] == joueur) {
         return 1;
     }
     if (grille[0][2] == joueur && grille[1][1] == joueur && grille[2][0] == joueur) {
         return 1;
     }
-    return 0; // ✅ 2. Aucun alignement trouvé
+    return 0;
+}
+
+int coup_gagnant(char grille[3][3], char symbole) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (grille[i][j] == '.') {
+                grille[i][j] = symbole;
+                if (a_gagne(grille, symbole) == 1) {
+                    grille[i][j] = '.';
+                    return (i*3 + j);
+                }
+                grille[i][j] = '.';
+            }
+
+        }
+
+    }
+    return -1;
 }
 
 int main(void) {
@@ -40,7 +58,8 @@ int main(void) {
     int ligne, colonne;
     char joueur = 'X';
     int nb_tours = 0;
-    int gagnant = 0; // ✅ 4. Drapeau : 1 si quelqu'un a gagné
+    int gagnant = 0;
+
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -51,7 +70,16 @@ int main(void) {
     afficher_grille(grille);
 
     while (nb_tours < 9) {
-        if (joueur == 'O') {
+        int win_x = coup_gagnant(grille, 'X');
+        int win_o = coup_gagnant(grille, 'O');
+
+        if (joueur == 'O' && win_o != -1) {
+            ligne = win_o/3 + 1;
+            colonne = win_o%3 + 1;
+        } else if (joueur == 'O' && win_x != -1) {
+            ligne = win_x/3 + 1;
+            colonne = win_x%3 + 1;
+        } else if (joueur == 'O') {
             ligne = (rand() % 3) + 1;
             colonne = (rand() % 3) + 1;
         } else {
@@ -68,13 +96,10 @@ int main(void) {
         } else {
             nb_tours++;
             grille[ligne-1][colonne-1] = joueur;
-            if (joueur == 'X') {
-                afficher_grille(grille);
-            }
             if (joueur == 'O') {
                 printf("L'ordi joue en %d %d\n", ligne, colonne);
-                afficher_grille(grille);
             }
+            afficher_grille(grille);
 
             // ✅ 3. On vérifie juste après le coup, pour le joueur qui vient de jouer
             if (a_gagne(grille, joueur) == 1) {
