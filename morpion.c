@@ -79,6 +79,21 @@ int main(void) {
         } else if (joueur == 'O' && win_x != -1) {
             ligne = win_x/3 + 1;
             colonne = win_x%3 + 1;
+        } else if (joueur == 'O' && grille[1][1] == '.') {
+            ligne = 2;
+            colonne = 2;
+        } else if (joueur == 'O' && grille[0][0] == '.') {
+            ligne = 1;
+            colonne = 1;
+        } else if (joueur == 'O' && grille[0][2] == '.') {
+            ligne = 1;
+            colonne = 3;
+        } else if (joueur == 'O' && grille[2][0] == '.') {
+            ligne = 3;
+            colonne = 1;
+        } else if (joueur == 'O' && grille[2][2] == '.') {
+            ligne = 3;
+            colonne = 3;
         } else if (joueur == 'O') {
             ligne = (rand() % 3) + 1;
             colonne = (rand() % 3) + 1;
