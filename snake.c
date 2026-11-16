@@ -7,6 +7,12 @@ struct maillon {
     struct maillon *precedent;
 }; 
 
+struct snake {
+    struct maillon *tete;
+    struct maillon *queue;
+};
+
+
 void cree_grille(char grille[12][12]) {
     for (int i =0; i < 12; i++) {
         for (int j = 0; j < 12; j++) {
@@ -17,12 +23,12 @@ void cree_grille(char grille[12][12]) {
             if(j == 0 || j == 11) {
                 grille[i][j] = '|';
             }
-            grille[0][0] = '+';
-            grille[11][11] = '+';
-            grille[0][11] = '+';
-            grille[11][0] = '+';
         }
     }
+    grille[0][0] = '+';
+    grille[11][11] = '+';
+    grille[0][11] = '+';
+    grille[11][0] = '+';
 }
 
 void afficher_grille(char grille[12][12]) {
@@ -35,9 +41,29 @@ void afficher_grille(char grille[12][12]) {
     printf("\n");
 }
 
+void avancer(char grille[12][12], struct snake *s, char direction) {
+    if (direction == 'm') {
+        struct maillon *c = malloc(sizeof(struct maillon));
+        struct maillon *a = malloc(sizeof(struct maillon));
+        c->position_y = s->tete->position_y -1;
+        c->position_x = s->tete->position_x;
+        c->precedent = NULL;
+        grille[s->queue->position_y][s->queue->position_x] = '.';
+        a = s->queue;
+        s->queue = s->queue->precedent;
+        s->tete->precedent = c;
+        grille[s->tete->position_y][s->tete->position_x] = 'o';
+        s->tete = c;
+        grille[s->tete->position_y][s->tete->position_x]  = '@';
+        free(a);
+    }
+}
 
 int main (void) {
+
     char grille[12][12];
+
+    char direction = 'm';
 
     cree_grille(grille);
 
@@ -58,6 +84,10 @@ int main (void) {
     tete->precedent = NULL;
 
     struct maillon *c = queue;
+
+    
+    struct snake s = {tete,queue};
+    
     
     while(c->precedent != NULL) {
         grille[c->position_y][c->position_x] = 'o';
@@ -68,10 +98,12 @@ int main (void) {
 
     afficher_grille(grille);
 
-
-    free(queue);
-    free(a);
-    free(tete);
+    avancer(grille, &s, direction);
+    afficher_grille(grille);
+    avancer(grille, &s, direction);
+    afficher_grille(grille);
+    avancer(grille, &s, direction);
+    afficher_grille(grille);
     
     return 0;
 }
