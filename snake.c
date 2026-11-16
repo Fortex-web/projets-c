@@ -42,63 +42,34 @@ void afficher_grille(char grille[12][12]) {
 }
 
 void avancer(char grille[12][12], struct snake *s, char direction) {
+    int dx;
+    int dy;
     if (direction == 'm') {
-        struct maillon *c = malloc(sizeof(struct maillon));
-        struct maillon *a;
-        c->position_y = s->tete->position_y -1;
-        c->position_x = s->tete->position_x;
-        c->precedent = NULL;
-        grille[s->queue->position_y][s->queue->position_x] = '.';
-        a = s->queue;
-        s->queue = s->queue->precedent;
-        s->tete->precedent = c;
-        grille[s->tete->position_y][s->tete->position_x] = 'o';
-        s->tete = c;
-        grille[s->tete->position_y][s->tete->position_x]  = '@';
-        free(a);
+        dy = -1;
+        dx = 0;
     } else if (direction == 'b') {
-        struct maillon *c = malloc(sizeof(struct maillon));
-        struct maillon *a;
-        c->position_y = s->tete->position_y +1;
-        c->position_x = s->tete->position_x;
-        c->precedent = NULL;
-        grille[s->queue->position_y][s->queue->position_x] = '.';
-        a = s->queue;
-        s->queue = s->queue->precedent;
-        s->tete->precedent = c;
-        grille[s->tete->position_y][s->tete->position_x] = 'o';
-        s->tete = c;
-        grille[s->tete->position_y][s->tete->position_x]  = '@';
-        free(a);
+        dy = 1;
+        dx = 0;
     } else if (direction == 'd') {
-        struct maillon *c = malloc(sizeof(struct maillon));
-        struct maillon *a;
-        c->position_x = s->tete->position_x +1;
-        c->position_y = s->tete->position_y;
-        c->precedent = NULL;
-        grille[s->queue->position_y][s->queue->position_x] = '.';
-        a = s->queue;
-        s->queue = s->queue->precedent;
-        s->tete->precedent = c;
-        grille[s->tete->position_y][s->tete->position_x] = 'o';
-        s->tete = c;
-        grille[s->tete->position_y][s->tete->position_x]  = '@';
-        free(a);
+        dx = 1;
+        dy = 0;
     } else if (direction == 'g') {
-        struct maillon *c = malloc(sizeof(struct maillon));
-        struct maillon *a;
-        c->position_x = s->tete->position_x -1;
-        c->position_y = s->tete->position_y;
-        c->precedent = NULL;
-        grille[s->queue->position_y][s->queue->position_x] = '.';
-        a = s->queue;
-        s->queue = s->queue->precedent;
-        s->tete->precedent = c;
-        grille[s->tete->position_y][s->tete->position_x] = 'o';
-        s->tete = c;
-        grille[s->tete->position_y][s->tete->position_x]  = '@';
-        free(a);
+        dx = -1;
+        dy = 0;
     }
+    struct maillon *c = malloc(sizeof(struct maillon));
+    struct maillon *a;
+    c->position_y = s->tete->position_y + dy;
+    c->position_x = s->tete->position_x + dx;
+    c->precedent = NULL;
+    grille[s->queue->position_y][s->queue->position_x] = '.';
+    a = s->queue;
+    s->queue = s->queue->precedent;
+    s->tete->precedent = c;
+    grille[s->tete->position_y][s->tete->position_x] = 'o';
+    s->tete = c;
+    grille[s->tete->position_y][s->tete->position_x]  = '@';
+    free(a);
 }
 
 int main (void) {
