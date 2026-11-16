@@ -41,6 +41,8 @@ void afficher_grille(char grille[12][12]) {
     printf("\n");
 }
 
+
+
 void avancer(char grille[12][12], struct snake *s, char direction) {
     int dx = 0;
     int dy = 0;
@@ -81,6 +83,7 @@ int main (void) {
 
     char grille[12][12];
     char direction;
+    int perdu = 0;
 
     cree_grille(grille);
 
@@ -115,12 +118,30 @@ int main (void) {
 
     afficher_grille(grille);
 
-    while((s.tete->position_x != 11) && (s.tete->position_y != 11) && (s.tete->position_x != 0) && (s.tete->position_y != 0))  {
+    while(perdu == 0 )  {
         scanf(" %c", &direction);
         printf("\n");
         avancer(grille, &s, direction);
+        struct maillon *d = s.queue;
+        while (d->precedent != NULL) {
+            if ((s.tete->position_x == d->position_x) && (s.tete->position_y == d->position_y)) {
+                perdu = 1;
+                break;
+            }
+            d = d->precedent;
+        }
+        
         afficher_grille(grille);
+        if ((s.tete->position_x == 11) || (s.tete->position_y == 11) || (s.tete->position_x == 0) || (s.tete->position_y == 0)) {
+            perdu = 1;
+        }
     }
+    
+    if (perdu == 1) {
+        printf("GAME OVER\n");
+    }
+
+    
     
     return 0;
 }
