@@ -42,41 +42,45 @@ void afficher_grille(char grille[12][12]) {
 }
 
 void avancer(char grille[12][12], struct snake *s, char direction) {
-    int dx;
-    int dy;
-    if (direction == 'm') {
-        dy = -1;
-        dx = 0;
-    } else if (direction == 'b') {
-        dy = 1;
-        dx = 0;
-    } else if (direction == 'd') {
-        dx = 1;
-        dy = 0;
-    } else if (direction == 'g') {
-        dx = -1;
-        dy = 0;
+    int dx = 0;
+    int dy = 0;
+    if ((direction != 'z') && (direction != 's') && (direction != 'd') && (direction != 'q')) {
+        printf("mauvaise touche, réessayez !\n\n");
+    } else {
+        if (direction == 'z') {
+            dy = -1;
+            dx = 0;
+        } else if (direction == 's') {
+            dy = 1;
+            dx = 0;
+        } else if (direction == 'd') {
+            dx = 1;
+            dy = 0;
+        } else if (direction == 'q') {
+            dx = -1;
+            dy = 0;
+        } 
+        struct maillon *c = malloc(sizeof(struct maillon));
+        struct maillon *a;
+        c->position_y = s->tete->position_y + dy;
+        c->position_x = s->tete->position_x + dx;
+        c->precedent = NULL;
+        grille[s->queue->position_y][s->queue->position_x] = '.';
+        a = s->queue;
+        s->queue = s->queue->precedent;
+        s->tete->precedent = c;
+        grille[s->tete->position_y][s->tete->position_x] = 'o';
+        s->tete = c;
+        grille[s->tete->position_y][s->tete->position_x]  = '@';
+        free(a);
     }
-    struct maillon *c = malloc(sizeof(struct maillon));
-    struct maillon *a;
-    c->position_y = s->tete->position_y + dy;
-    c->position_x = s->tete->position_x + dx;
-    c->precedent = NULL;
-    grille[s->queue->position_y][s->queue->position_x] = '.';
-    a = s->queue;
-    s->queue = s->queue->precedent;
-    s->tete->precedent = c;
-    grille[s->tete->position_y][s->tete->position_x] = 'o';
-    s->tete = c;
-    grille[s->tete->position_y][s->tete->position_x]  = '@';
-    free(a);
+    
 }
 
 int main (void) {
 
     char grille[12][12];
-
-    char direction = 'm';
+    char direction;
 
     cree_grille(grille);
 
@@ -111,12 +115,12 @@ int main (void) {
 
     afficher_grille(grille);
 
-    avancer(grille, &s, 'd');
-    afficher_grille(grille);
-    avancer(grille, &s, 'd');
-    afficher_grille(grille);
-    avancer(grille, &s, 'm');
-    afficher_grille(grille);
+    while((s.tete->position_x != 11) && (s.tete->position_y != 11) && (s.tete->position_x != 0) && (s.tete->position_y != 0))  {
+        scanf(" %c", &direction);
+        printf("\n");
+        avancer(grille, &s, direction);
+        afficher_grille(grille);
+    }
     
     return 0;
 }
