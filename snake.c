@@ -95,8 +95,8 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
             int pomme_y = place_pomme % 11;
             grille[pomme_y][pomme_x] = '9';
         } else {
-            grille[s->tete->position_y][s->tete->position_x]  = '@';
             grille[s->queue->position_y][s->queue->position_x] = '.';
+            grille[s->tete->position_y][s->tete->position_x]  = '@';
             a = s->queue;
             s->queue = s->queue->precedent;
             free(a);
