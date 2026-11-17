@@ -61,7 +61,7 @@ int placer_pomme(struct snake *s) {
     return pomme_x * 11 + pomme_y;
 }
 
-void avancer(char grille[12][12], struct snake *s, char direction) {
+void avancer(char grille[12][12], struct snake *s, char direction, int *p) {
     int dx = 0;
     int dy = 0;
     if ((direction != 'z') && (direction != 's') && (direction != 'd') && (direction != 'q')) {
@@ -93,6 +93,7 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
             int place_pomme = placer_pomme(s);
             int pomme_x = place_pomme / 11;
             int pomme_y = place_pomme % 11;
+            *p = *p +1;
             grille[pomme_y][pomme_x] = '9';
         } else {
             grille[s->queue->position_y][s->queue->position_x] = '.';
@@ -104,7 +105,6 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
     }
         
 }
-    
 
 void liberer_serpent(struct snake *s) {
     struct maillon *d = s->queue;
@@ -118,6 +118,7 @@ void liberer_serpent(struct snake *s) {
     }
     
 }
+    
 
 int main (void) {
 
@@ -126,6 +127,8 @@ int main (void) {
     int perdu = 0;
     srand(time(NULL));
     int pomme_x, pomme_y;
+    int score = 0;
+    int *p = &score;
 
     cree_grille(grille);
 
@@ -171,7 +174,7 @@ int main (void) {
     while(perdu == 0 )  {
         scanf(" %c", &direction);
         printf("\n");
-        avancer(grille, &s, direction);
+        avancer(grille, &s, direction, p);
         struct maillon *d = s.queue;
         while (d->precedent != NULL) {
             if ((s.tete->position_x == d->position_x) && (s.tete->position_y == d->position_y)) {
@@ -190,10 +193,9 @@ int main (void) {
     if (perdu == 1) {
         printf("GAME OVER\n");
     }
+    printf("Votre score est de %d \n", *p);
 
     liberer_serpent(&s);
-
-    
     
     return 0;
 }
