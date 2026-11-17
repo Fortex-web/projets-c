@@ -42,7 +42,24 @@ void afficher_grille(char grille[12][12]) {
     printf("\n");
 }
 
-
+int placer_pomme(struct snake *s) {
+    int recommencer;
+    int pomme_x;
+    int pomme_y;
+    do {
+        struct maillon *d = s->queue;
+        pomme_x = rand() % 10 + 1;
+        pomme_y = rand() % 10 + 1;
+        recommencer = 0;
+        while(d != NULL) {
+            if (pomme_x == d->position_x && pomme_y == d->position_y) {
+                recommencer = 1;
+            }
+            d = d->precedent;
+        }
+    } while (recommencer != 0);
+    return pomme_x * 11 + pomme_y;
+}
 
 void avancer(char grille[12][12], struct snake *s, char direction) {
     int dx = 0;
@@ -68,36 +85,26 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
         c->position_y = s->tete->position_y + dy;
         c->position_x = s->tete->position_x + dx;
         c->precedent = NULL;
-        grille[s->queue->position_y][s->queue->position_x] = '.';
-        a = s->queue;
-        s->queue = s->queue->precedent;
         s->tete->precedent = c;
         grille[s->tete->position_y][s->tete->position_x] = 'o';
         s->tete = c;
-        grille[s->tete->position_y][s->tete->position_x]  = '@';
-        free(a);
-    }
-    
-}
-
-int placer_pomme(char grille[12][12], struct snake *s) {
-    int recommencer;
-    int pomme_x;
-    int pomme_y;
-    do {
-        struct maillon *d = s->queue;
-        pomme_x = rand() % 10 + 1;
-        pomme_y = rand() % 10 + 1;
-        recommencer = 0;
-        while(d != NULL) {
-            if (pomme_x == d->position_x && pomme_y == d->position_y) {
-                recommencer = 1;
-            }
-            d = d->precedent;
+        if (grille[s->tete->position_y][s->tete->position_x] == '9') {
+            grille[s->tete->position_y][s->tete->position_x]  = '@';
+            int place_pomme = placer_pomme(s);
+            int pomme_x = place_pomme / 11;
+            int pomme_y = place_pomme % 11;
+            grille[pomme_y][pomme_x] = '9';
+        } else {
+            grille[s->tete->position_y][s->tete->position_x]  = '@';
+            grille[s->queue->position_y][s->queue->position_x] = '.';
+            a = s->queue;
+            s->queue = s->queue->precedent;
+            free(a);
         }
-    } while (recommencer != 0);
-    return pomme_x * 11 + pomme_y;
+    }
+        
 }
+    
 
 int main (void) {
 
@@ -135,16 +142,17 @@ int main (void) {
         grille[c->position_y][c->position_x] = 'o';
         c = c->precedent;
     }
+    grille[tete->position_y][tete->position_x] = '@';
 
     for (int i =0; i < 3; i++) {
-        int place_pomme = placer_pomme(grille, &s);
+        int place_pomme = placer_pomme(&s);
         pomme_x = place_pomme / 11;
         pomme_y = place_pomme % 11;
         grille[pomme_y][pomme_x] = '9';
     }
-
-    grille[tete->position_y][tete->position_x] = '@';
-
+    
+    
+    
     afficher_grille(grille);
 
     while(perdu == 0 )  {
