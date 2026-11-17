@@ -106,6 +106,19 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
 }
     
 
+void liberer_serpent(struct snake *s) {
+    struct maillon *d = s->queue;
+    struct maillon *c;
+    while (d != NULL)
+    {
+        c = d;
+        d = d->precedent;
+        free(c);
+        
+    }
+    
+}
+
 int main (void) {
 
     char grille[12][12];
@@ -177,6 +190,8 @@ int main (void) {
     if (perdu == 1) {
         printf("GAME OVER\n");
     }
+
+    liberer_serpent(&s);
 
     
     
