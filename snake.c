@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 struct maillon {
     int position_x;
@@ -79,11 +80,32 @@ void avancer(char grille[12][12], struct snake *s, char direction) {
     
 }
 
+int placer_pomme(char grille[12][12], struct snake *s) {
+    int recommencer;
+    int pomme_x;
+    int pomme_y;
+    do {
+        struct maillon *d = s->queue;
+        pomme_x = rand() % 10 + 1;
+        pomme_y = rand() % 10 + 1;
+        recommencer = 0;
+        while(d != NULL) {
+            if (pomme_x == d->position_x && pomme_y == d->position_y) {
+                recommencer = 1;
+            }
+            d = d->precedent;
+        }
+    } while (recommencer != 0);
+    return pomme_x * 11 + pomme_y;
+}
+
 int main (void) {
 
     char grille[12][12];
     char direction;
     int perdu = 0;
+    srand(time(NULL));
+    int pomme_x, pomme_y;
 
     cree_grille(grille);
 
@@ -112,6 +134,13 @@ int main (void) {
     while(c->precedent != NULL) {
         grille[c->position_y][c->position_x] = 'o';
         c = c->precedent;
+    }
+
+    for (int i =0; i < 3; i++) {
+        int place_pomme = placer_pomme(grille, &s);
+        pomme_x = place_pomme / 11;
+        pomme_y = place_pomme % 11;
+        grille[pomme_y][pomme_x] = '9';
     }
 
     grille[tete->position_y][tete->position_x] = '@';
