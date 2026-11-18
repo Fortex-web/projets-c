@@ -6,3 +6,5 @@ Pendu : jeu du pendu dans le terminal, 7 essais, gestion des lettres déjà prop
 Morpion : jeu du morpion contre une IA imbattable dans le terminal (algorithme minimax récursif : l’ordi simule toutes les parties possibles et ne perd jamais), vérification des coups (hors grille, case déjà prise), détection de victoire (lignes, colonnes, diagonales) et match nul.
 
 Snake (en cours) : jeu du serpent dans le terminal, corps du serpent en liste chaînée.
+
+Gestionnaire de tâches (en cours) : to-do list dans le terminal, tâches stockées dans une liste chaînée.
