@@ -9,8 +9,8 @@ struct tache {
 };
 
 struct liste {
-    struct tache *tete;   
-    struct tache *queue;  
+    struct tache *tete;
+    struct tache *queue;
 };
 
 void ajouter_tache(struct liste *l, char *titre) {
@@ -54,18 +54,33 @@ void menu (struct liste *l) {
             char texte[50];
             printf("Titre de la tâche : ");
             fgets(texte, sizeof(texte), stdin);
-            texte[strcspn(texte, "\n")] = '\0';   
+            texte[strcspn(texte, "\n")] = '\0';
             printf("\n");
             ajouter_tache(l, texte);
-            printf("Tâche ajoutée !");
+            printf("Tâche ajoutée !\n");
         } else if (choix == 2) {
-            
+            int numero;
+            struct tache *d;
+            int i = 0;
+            printf("Désignez le numéro de tache que vous voulez cochez \n");
+            scanf(" %d", &numero);
+            d = l->tete;
+            while( i < numero - 1 && numero > 0 && d->suivante != NULL) {
+                d = d->suivante;
+                i++;
+            }
+            if (numero < 1 || i != numero - 1 || d == NULL) {
+                printf("Numero pas bon, veillez tapez un numero valide !\n");
+            } else {
+                d->etat = (d->etat - 1)*(d->etat - 1);
+            }
+
         } else if (choix == 3) {
-            
+
         } else if (choix == 4) {
             quitter = 1;
         } else {
-            printf("Choix inconnu !");
+            printf("Choix inconnu !\n");
         }
     }
 }
@@ -75,7 +90,6 @@ int main(void) {
     ajouter_tache(&l, "Réviser LO21");
     ajouter_tache(&l, "Aller à la salle");
     ajouter_tache(&l, "Rendre le TP");
-    afficher_taches(&l);
     menu(&l);
 
 
