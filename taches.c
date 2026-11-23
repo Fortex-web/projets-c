@@ -65,7 +65,7 @@ void menu (struct liste *l) {
             printf("Désignez le numéro de tache que vous voulez cochez \n");
             scanf(" %d", &numero);
             d = l->tete;
-            while( i < numero - 1 && numero > 0 && d->suivante != NULL) {
+            while( d != NULL && i < numero - 1 && numero > 0 && d->suivante != NULL) {
                 d = d->suivante;
                 i++;
             }
@@ -76,7 +76,44 @@ void menu (struct liste *l) {
             }
 
         } else if (choix == 3) {
+            int numero;
+            struct tache *d;   // la tâche d'AVANT celle à supprimer
+            struct tache *b;   // la tâche à supprimer
+            int i = 0;
+            printf("Désignez le numéro de tache que vous voulez supprimez \n");
+            scanf(" %d", &numero);
 
+            if (l->tete == NULL || numero < 1) {
+                // liste vide ou numéro trop petit
+                printf("Numero pas bon, veillez tapez un numero valide !\n");
+            } else if (numero == 1) {
+                // Cas 1 : la première tâche -> c'est l'étiquette tete qu'on déplace
+                b = l->tete;
+                l->tete = b->suivante;
+                if (l->tete == NULL) {
+                    // c'était la seule tâche : la liste est vide
+                    l->queue = NULL;
+                }
+                free(b);
+            } else {
+                // Cas général : on s'arrête sur la tâche d'AVANT
+                d = l->tete;
+                while (i < numero - 2 && d->suivante != NULL) {
+                    d = d->suivante;
+                    i++;
+                }
+                b = d->suivante;   // la tâche à supprimer (NULL si elle n'existe pas)
+                if (i != numero - 2 || b == NULL) {
+                    printf("Numero pas bon, veillez tapez un numero valide !\n");
+                } else {
+                    d->suivante = b->suivante;   // la chaîne saute b
+                    if (b == l->queue) {
+                        // on supprime la dernière : l'étiquette queue recule sur d
+                        l->queue = d;
+                    }
+                    free(b);
+                }
+            }
         } else if (choix == 4) {
             quitter = 1;
         } else {
