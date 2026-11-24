@@ -9,9 +9,25 @@ struct tache {
 };
 
 struct liste {
-    struct tache *tete;
-    struct tache *queue;
+    struct tache *tete;   
+    struct tache *queue;  
 };
+
+void sauvegarder(struct liste *l) {
+    FILE *f = fopen("tache.txt", "w");
+    struct tache *d;
+    if (f == NULL) {
+    printf("Impossible d'ouvrir le fichier\n");
+    return ;
+    }
+    d = l->tete;
+    while (d != NULL) {
+        fprintf(f, "%d %s\n", d->etat, d->titre);
+        d = d->suivante;
+    }
+    fclose(f);
+}
+
 
 void ajouter_tache(struct liste *l, char *titre) {
     struct tache *t = malloc(sizeof(struct tache));
@@ -42,6 +58,25 @@ void afficher_taches(struct liste *l) {
     }
 }
 
+void charger(struct liste *l) {
+    FILE *f = fopen("tache.txt", "r");
+    if (f == NULL) {
+        printf("fichier inexistant !");
+        return;
+    }
+    char ligne[100];
+    while (fgets(ligne, sizeof(ligne), f) != NULL) {
+        int etat;
+        char tache[50];
+        sscanf(ligne, "%d %49[^\n]", &etat, tache);  
+        ajouter_tache(l, tache);
+        if ( etat == 1) {
+            l->queue->etat = 1;
+        }
+    }
+    fclose(f);
+}
+
 void menu (struct liste *l) {
     int quitter = 0;
     int choix = 0;
@@ -54,10 +89,11 @@ void menu (struct liste *l) {
             char texte[50];
             printf("Titre de la tâche : ");
             fgets(texte, sizeof(texte), stdin);
-            texte[strcspn(texte, "\n")] = '\0';
+            texte[strcspn(texte, "\n")] = '\0';   
             printf("\n");
             ajouter_tache(l, texte);
             printf("Tâche ajoutée !\n");
+            sauvegarder(l);
         } else if (choix == 2) {
             int numero;
             struct tache *d;
@@ -74,46 +110,43 @@ void menu (struct liste *l) {
             } else {
                 d->etat = (d->etat - 1)*(d->etat - 1);
             }
-
+            sauvegarder(l);
         } else if (choix == 3) {
             int numero;
-            struct tache *d;   // la tâche d'AVANT celle à supprimer
-            struct tache *b;   // la tâche à supprimer
+            struct tache *d;   
+            struct tache *b;   
             int i = 0;
             printf("Désignez le numéro de tache que vous voulez supprimez \n");
             scanf(" %d", &numero);
 
             if (l->tete == NULL || numero < 1) {
-                // liste vide ou numéro trop petit
                 printf("Numero pas bon, veillez tapez un numero valide !\n");
             } else if (numero == 1) {
-                // Cas 1 : la première tâche -> c'est l'étiquette tete qu'on déplace
                 b = l->tete;
                 l->tete = b->suivante;
                 if (l->tete == NULL) {
-                    // c'était la seule tâche : la liste est vide
+
                     l->queue = NULL;
                 }
                 free(b);
             } else {
-                // Cas général : on s'arrête sur la tâche d'AVANT
                 d = l->tete;
                 while (i < numero - 2 && d->suivante != NULL) {
                     d = d->suivante;
                     i++;
                 }
-                b = d->suivante;   // la tâche à supprimer (NULL si elle n'existe pas)
+                b = d->suivante;   
                 if (i != numero - 2 || b == NULL) {
                     printf("Numero pas bon, veillez tapez un numero valide !\n");
                 } else {
-                    d->suivante = b->suivante;   // la chaîne saute b
+                    d->suivante = b->suivante;   
                     if (b == l->queue) {
-                        // on supprime la dernière : l'étiquette queue recule sur d
                         l->queue = d;
                     }
                     free(b);
                 }
             }
+            sauvegarder(l);
         } else if (choix == 4) {
             quitter = 1;
         } else {
@@ -124,9 +157,7 @@ void menu (struct liste *l) {
 
 int main(void) {
     struct liste l = {NULL, NULL};
-    ajouter_tache(&l, "Réviser LO21");
-    ajouter_tache(&l, "Aller à la salle");
-    ajouter_tache(&l, "Rendre le TP");
+    charger(&l); 
     menu(&l);
 
 

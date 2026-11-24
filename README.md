@@ -7,4 +7,4 @@ Morpion : jeu du morpion contre une IA imbattable dans le terminal (algorithme m
 
 Snake (en cours) : jeu du serpent dans le terminal, corps du serpent en liste chaînée.
 
-Gestionnaire de tâches (en cours) : to-do list dans le terminal, tâches stockées dans une liste chaînée.
+Gestionnaire de tâches : to-do list dans le terminal (ajouter, cocher/décocher, supprimer), tâches stockées dans une liste chaînée et sauvegardées dans un fichier.
