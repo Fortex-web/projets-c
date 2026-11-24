@@ -155,10 +155,24 @@ void menu (struct liste *l) {
     }
 }
 
+void liberer_liste(struct liste *l) {
+    struct tache *d = l->tete;
+    struct tache *c;
+    while (d != NULL)
+    {
+        c = d;
+        d = d->suivante;
+        free(c);
+        
+    }
+    
+}
+
 int main(void) {
     struct liste l = {NULL, NULL};
     charger(&l); 
     menu(&l);
+    liberer_liste(&l);
 
 
     return 0;
